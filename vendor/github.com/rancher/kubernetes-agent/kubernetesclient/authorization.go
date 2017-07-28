@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
+	log "github.com/Sirupsen/logrus"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -29,15 +30,18 @@ func Init() error {
 		return errors.New("No token passed in from stdin")
 	}
 
+	log.Infof("token is %s", token)
 	caData, err = ioutil.ReadFile(caLocation)
 	if err != nil {
 		return fmt.Errorf("Failed to read CA cert %s: %v", caLocation, err)
 	}
+	log.Infof("ca data is %s", caData)
 
 	return nil
 }
 
 func GetAuthorizationHeader() string {
+	log.Infof("Bearer token is %s", token)
 	return fmt.Sprintf("Bearer %s", token)
 }
 

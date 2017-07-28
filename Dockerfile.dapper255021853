@@ -1,0 +1,2 @@
+FROM servicealias:master
+COPY . /go/src/github.com/rancher/servicealias/

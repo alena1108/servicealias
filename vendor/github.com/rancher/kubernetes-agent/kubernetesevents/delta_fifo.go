@@ -110,7 +110,7 @@ func (d *DeltaFIFO) Process() {
 			TLSClientConfig: kubernetesclient.GetTLSClientConfig(),
 		}
 		headers := http.Header{}
-		headers.Add("Origin", "http://kubernetes-agent")
+		headers.Add("Origin", "http://service-alias")
 		headers.Add("Authorization", kubernetesclient.GetAuthorizationHeader())
 
 		var err error

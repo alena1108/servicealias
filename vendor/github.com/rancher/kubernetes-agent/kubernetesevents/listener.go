@@ -18,9 +18,11 @@ import (
 
 var (
 	pathTemplates = []string{
+		"/api/v1/%s",
+		"/apis/extensions/v1beta1/%s",
 		"/apis/rancher.io/v1/%s",
 	}
-	waits = []int{0, 1}
+	waits = []int{0, 1, 2, 4, 8, 16, 0}
 )
 
 type Handler interface {
@@ -49,7 +51,7 @@ func ConnectToEventStream(handlers []Handler, conf config.Config) error {
 			TLSClientConfig: kubernetesclient.GetTLSClientConfig(),
 		}
 		headers := http.Header{}
-		headers.Add("Origin", "http://kubernetes-agent")
+		headers.Add("Origin", "http://service-alias")
 		headers.Add("Authorization", kubernetesclient.GetAuthorizationHeader())
 
 	outer:
@@ -60,7 +62,6 @@ func ConnectToEventStream(handlers []Handler, conf config.Config) error {
 
 				ws, _, err := dialer.Dial(url, headers)
 				if err != nil {
-					log.Error("Failed to connet to %s. Error: %#v", url, err)
 					if idx < len(waits)-1 {
 						if idx > 0 {
 							log.Warnf("Error connecting to %s. Try %v of %v. Will wait %v seconds and try again. Error: %#v", url, idx, len(waits), wait, err)
@@ -68,7 +69,7 @@ func ConnectToEventStream(handlers []Handler, conf config.Config) error {
 						time.Sleep(time.Second * time.Duration(wait))
 						continue
 					} else {
-						log.Error("Failed to connet to %s. Giving up. Error: %#v", url, err)
+						log.Errorf("Failed to connect to %s. Giving up. Error: %#v", url, err)
 						return err
 					}
 				} else {

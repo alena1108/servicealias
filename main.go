@@ -51,6 +51,9 @@ func launch(c *cli.Context) {
 
 	resultChan := make(chan error)
 
+	if err := kubernetesclient.Init(); err != nil {
+		logrus.Fatal(err)
+	}
 	client := kubernetesclient.NewClient(conf.KubernetesURL, true)
 	hs := []kubernetesevents.Handler{}
 

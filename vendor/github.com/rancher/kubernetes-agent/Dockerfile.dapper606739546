@@ -1,0 +1,2 @@
+FROM kubernetes-agent:alias
+COPY . /go/src/github.com/rancher/kubernetes-agent/

@@ -22,7 +22,7 @@ func NewHandler(kubernetesClient *kubernetesclient.Client, kindHandled string) *
 func (h *GenericHandler) Handle(event model.WatchEvent) error {
 
 	if i, ok := event.Object.(map[string]interface{}); ok {
-		if h.kindHandled == "servicealias" {
+		if h.kindHandled == "servicealiases" {
 			switch event.Type {
 			case "MODIFIED":
 				logrus.Info("Service alias is modified %v", i)
