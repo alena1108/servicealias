@@ -72,6 +72,10 @@ func (h *GenericHandler) GetKindHandled() string {
 
 func (h *GenericHandler) deleteServiceForAlias(alias ServiceAlias) error {
 	_, err := h.client.Service.DeleteService("default", alias.Metadata.Name)
+	if err != nil {
+		return err
+	}
+	_, err = h.client.Service.DeleteEndpoint("default", alias.Metadata.Name)
 	return err
 }
 
@@ -95,10 +99,15 @@ func (h *GenericHandler) createServiceForAlias(alias ServiceAlias) (*model.Servi
 			}
 			epPorts = append(epPorts, epPort)
 		}
-		epAddress := model.EndpointAddress{
-			Ip: linkedService.Spec.ClusterIP,
+
+		eps, err := h.client.Service.GetEndpoint("default", linkedServiceName)
+		if err != nil {
+			return nil, err
 		}
-		epAddresses = append(epAddresses, epAddress)
+
+		for _, subset := range eps.Subsets {
+			epAddresses = append(epAddresses, subset.Addresses...)
+		}
 	}
 	ports := make([]model.ServicePort, 0)
 	port := model.ServicePort{
