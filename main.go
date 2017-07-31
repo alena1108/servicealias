@@ -14,6 +14,7 @@ import (
 var VERSION = "v0.0.0-dev"
 
 func main() {
+	logrus.Info("Starting service aliaser")
 	app := cli.NewApp()
 	app.Name = "service-aliaser"
 	app.Usage = "Start the Service aliaser"

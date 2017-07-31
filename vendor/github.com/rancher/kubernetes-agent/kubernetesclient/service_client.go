@@ -8,12 +8,14 @@ import (
 
 const ServicePath string = "/api/v1/namespaces/%s/services"
 const ServiceByNamePath string = "/api/v1/namespaces/%s/services/%s"
+const EndpointsPath string = "/api/v1/namespaces/%s/endpoints"
 
 type ServiceOperations interface {
 	ByName(namespace string, name string) (*model.Service, error)
 	CreateService(namespace string, resource *model.Service) (*model.Service, error)
 	ReplaceService(namespace string, resource *model.Service) (*model.Service, error)
 	DeleteService(namespace string, name string) (*model.Status, error)
+	CreateEndpoint(namespace string, resource *model.Endpoints) (*model.Endpoints, error)
 }
 
 func newServiceClient(client *Client) *ServiceClient {
@@ -52,4 +54,11 @@ func (c *ServiceClient) DeleteService(namespace string, name string) (*model.Sta
 	path := fmt.Sprintf(ServiceByNamePath, namespace, name)
 	err := c.client.doDelete(path, status)
 	return status, err
+}
+
+func (c *ServiceClient) CreateEndpoint(namespace string, resource *model.Endpoints) (*model.Endpoints, error) {
+	resp := &model.Endpoints{}
+	path := fmt.Sprintf(EndpointsPath, namespace)
+	err := c.client.doPost(path, resource, resp)
+	return resp, err
 }
